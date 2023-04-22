@@ -192,6 +192,9 @@ while True:
                 fenetre.blit(image_caisse_ok, (marge_x + x * taille_case, marge_y + y * taille_case))
             elif grille.est_grass(x, y):
                 fenetre.blit(image_grass, (marge_x + x * taille_case, marge_y + y * taille_case))
+            else:
+                fenetre.blit(image_grass, (marge_x + x * taille_case, marge_y + y * taille_case))
+
 
     # Afficher le personnage
     personnage.afficher(fenetre, taille_case, marge_x, marge_y)

@@ -53,6 +53,16 @@ class Grille:
         return False
 
 
+
+    def caisse_adjacente_mur(self, contenu, x, y):
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.largeur and 0 <= ny < self.hauteur and contenu[ny][nx] == '#':
+                return True
+        return False
+
+
+
     def est_coin(self, contenu, x, y):
         haut_gauche = (contenu[y - 1][x] == '#' and contenu[y][x - 1] == '#')
         haut_droite = (contenu[y - 1][x] == '#' and contenu[y][x + 1] == '#')
@@ -86,9 +96,14 @@ class Grille:
                 while True:
                     x = random.randint(1, self.largeur - 2)
                     y = random.randint(1, self.hauteur - 2)
-                    if contenu[y][x] == '.':
+                    if (contenu[y][x] == '.' and not self.est_coin(contenu, x, y)
+                        and self.est_espace_suffisant(contenu, x, y)
+                        and not self.caisse_adjacente_mur(contenu, x, y)
+                        and self.caisse_deplacable(contenu, x, y)):
                         contenu[y][x] = '$'
                         break
+
+
         # Add grass obstacles
             for _ in range(self.grass_count):
                 while True:
@@ -165,3 +180,24 @@ class Grille:
             return True
         else:
             return False
+    
+
+    def est_espace_suffisant(self, contenu, x, y):
+        cases_libres = 0
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.largeur and 0 <= ny < self.hauteur and contenu[ny][nx] != '#':
+                cases_libres += 1
+        return cases_libres >= 2
+
+
+    def caisse_deplacable(self, contenu, x, y):
+        directions_deplacables = 0
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < self.largeur and 0 <= ny < self.hauteur and (contenu[ny][nx] == '.' or contenu[ny][nx] == '*'):
+                directions_deplacables += 1
+                if directions_deplacables >= 2:
+                    return True
+        return False
+
